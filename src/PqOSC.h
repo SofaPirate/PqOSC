@@ -13,7 +13,7 @@ namespace pq
     HybridArrayList<OSCIn *, PLAQUETTE_MAX_UNITS> _PqoscInList;
 
     // ===============================================================
-    class OSCIn : public Unit
+    class OSCIn : public AnalogSource
     {
 
        // friend class OSCSlip; // Grant access
@@ -23,6 +23,11 @@ namespace pq
         float _value;
         MicroOsc &_microOsc;
 
+        protected:
+        void begin() {
+            _PqoscInList.add(this);
+        }
+
     public:
         const char *address()
         {
@@ -31,7 +36,7 @@ namespace pq
 
         OSCIn(MicroOsc &osc, const char *address) : _microOsc(osc), _address(address)
         {
-            _PqoscInList.add(this);
+            
         }
 
         float put(float f)
@@ -96,6 +101,11 @@ private:
     int _baud;
 
 protected:
+  void step() override
+    {
+            this->onOscMessageReceived(_PqOSCMessageCallback);
+    }
+
     void begin()
     {
         _serial.begin(_baud);
