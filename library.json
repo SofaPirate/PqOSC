@@ -1,0 +1,27 @@
+{
+  "name": "PqOSC",
+  "version": "0.1",
+  "description": "Open Sound Control (OSC) library for Plaquette",
+  "keywords": "Communication",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/SofaPirate/PqOSC.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Thomas Fredericks",
+      "url": "https://github.com/thomasfredericks",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/SofaPirate/PqOSC",
+  "dependencies": {
+    "Plaquette": "https://github.com/SofaPirate/Plaquette.git#develop" ,
+    "MicroOsc": "https://github.com/thomasfredericks/MicroOsc.git"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}
