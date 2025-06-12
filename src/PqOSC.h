@@ -9,14 +9,14 @@
 namespace pq
 {
     // ===============================================================
-    class PqOSCIn; // forward declaration
-    HybridArrayList<PqOSCIn *, PLAQUETTE_MAX_UNITS> _PqoscInList;
+    class OSCIn; // forward declaration
+    HybridArrayList<OSCIn *, PLAQUETTE_MAX_UNITS> _PqoscInList;
 
     // ===============================================================
-    class PqOSCIn : public Unit
+    class OSCIn : public Unit
     {
 
-       // friend class PqOSCSlip; // Grant access
+       // friend class OSCSlip; // Grant access
 
     private:
         const char *_address;
@@ -29,7 +29,7 @@ namespace pq
             return _address;
         }
 
-        PqOSCIn(MicroOsc &osc, const char *address) : _microOsc(osc), _address(address)
+        OSCIn(MicroOsc &osc, const char *address) : _microOsc(osc), _address(address)
         {
             _PqoscInList.add(this);
         }
@@ -65,8 +65,8 @@ namespace pq
     class PqOSC : public Unit, protected MicroOsc
     {
 
-        friend class PqOSCIn;  // Grant access
-        friend class PqOSCOut; // Grant access
+        friend class OSCIn;  // Grant access
+        friend class OSCOut; // Grant access
 
     protected:
         MicroOsc &_microOsc;
@@ -75,7 +75,7 @@ namespace pq
         {
         }
 
-        void _add(PqOSCIn *component)
+        void _add(OSCIn *component)
         {
             _PqoscInList.add(component);
         }
@@ -89,7 +89,7 @@ namespace pq
     // ===============================================================
 
     template <const size_t MICRO_OSC_IN_SIZE>
-class PqOSCSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
+class OSCSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
 {
 private:
     HardwareSerial &_serial;
@@ -108,7 +108,7 @@ protected:
 
 public:
     // Constructor with default value for _iic_address
-    PqOSCSlip(HardwareSerial &serial, int baud)
+    OSCSlip(HardwareSerial &serial, int baud)
         : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud)
     {
     }
@@ -120,7 +120,7 @@ public:
 
     // ===============================================================
 
-    class PqOSCOut : public Unit
+    class OSCOut : public Unit
     {
     private:
         MicroOsc &_microOsc;
@@ -130,7 +130,7 @@ public:
         float _value;
 
     public:
-        PqOSCOut(MicroOsc &osc, const char *address, unsigned long interval = 50) : _microOsc(osc), _address(address), _interval(interval)
+        OSCOut(MicroOsc &osc, const char *address, unsigned long interval = 50) : _microOsc(osc), _address(address), _interval(interval)
         {
         }
 
