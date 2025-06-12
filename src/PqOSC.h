@@ -10,22 +10,23 @@ namespace pq
 {
     // ===============================================================
     class OSCIn; // forward declaration
-    HybridArrayList<OSCIn *, PLAQUETTE_MAX_UNITS> _PqoscInList;
+    HybridArrayList<OSCIn *, PLAQUETTE_MAX_UNITS> _PqOSCInList;
 
     // ===============================================================
-    class OSCIn : public AnalogSource
+    class OSCIn : public Unit
     {
 
-       // friend class OSCSlip; // Grant access
+        // friend class OSCSlip; // Grant access
 
     private:
         const char *_address;
         float _value;
         MicroOsc &_microOsc;
 
-        protected:
-        void begin() {
-            _PqoscInList.add(this);
+    protected:
+        void begin()
+        {
+            _PqOSCInList.add(this);
         }
 
     public:
@@ -36,18 +37,24 @@ namespace pq
 
         OSCIn(MicroOsc &osc, const char *address) : _microOsc(osc), _address(address)
         {
-            
         }
 
-        float put(float f)
+        void set(float f)
         {
             _value = f;
-            return get();
         }
 
         float get()
         {
             return _value;
+        }
+
+    private:
+        // DISABLE THE PUT
+        float put(float f)
+        {
+            //_value = f;
+            return f;
         }
     };
 
@@ -56,11 +63,12 @@ namespace pq
     void _PqOSCMessageCallback(MicroOscMessage &message)
     {
         // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
-        for (size_t i = 0; i != _PqoscInList.size(); i++)
+        for (size_t i = 0; i != _PqOSCInList.size(); i++)
         {
-            if (message.checkOscAddress(_PqoscInList[i]->address()))
+            // SHOULD CONVERT INT TO FLOAT
+            if (message.checkOscAddress(_PqOSCInList[i]->address()))
             {
-                _PqoscInList[i]->put(message.nextAsFloat());
+                _PqOSCInList[i]->set(message.nextAsFloat());
             }
         }
     };
@@ -94,37 +102,35 @@ namespace pq
     // ===============================================================
 
     template <const size_t MICRO_OSC_IN_SIZE>
-class OSCSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
-{
-private:
-    HardwareSerial &_serial;
-    int _baud;
-
-protected:
-  void step() override
+    class OSCSSLIP : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
+    private:
+        HardwareSerial &_serial;
+        int _baud;
+
+    protected:
+        void step() override
+        {
             this->onOscMessageReceived(_PqOSCMessageCallback);
-    }
+        }
 
-    void begin()
-    {
-        _serial.begin(_baud);
-    }
+        void begin()
+        {
+            _serial.begin(_baud);
+        }
 
-    float get()
-    {
-        return 0;
-    }
+        float get()
+        {
+            return 0;
+        }
 
-public:
-    // Constructor with default value for _iic_address
-    OSCSlip(HardwareSerial &serial, int baud)
-        : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud)
-    {
-    }
-
-   
-};
+    public:
+        // Constructor with default value for _iic_address
+        OSCSSLIP(HardwareSerial &serial, int baud)
+            : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud)
+        {
+        }
+    };
 
     // ===============================================================
 
