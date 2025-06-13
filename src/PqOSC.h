@@ -146,8 +146,9 @@ namespace pq
         float _value;
 
     public:
-        OSCOut(MicroOsc &osc, const char *address, unsigned long interval = 50) : _microOsc(osc), _address(address), _interval(interval)
+        OSCOut(MicroOsc &osc, const char *address, float minimumInterval = 0.05) : _microOsc(osc), _address(address)
         {
+            _interval = floor(minimumInterval * 1000.0f);
         }
 
         float put(float f)
