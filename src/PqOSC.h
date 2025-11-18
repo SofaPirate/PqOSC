@@ -19,14 +19,19 @@ namespace pq
         // friend class OSCSlip; // Grant access
 
     private:
-        const char *_address;
+        const char * _address;
         float _value;
         MicroOsc &_microOsc;
 
     protected:
-        void begin()
+        virtual void begin() override
         {
             _PqOSCInList.add(this);
+        }
+
+        virtual void step() override
+        {
+            
         }
 
     public:
@@ -35,11 +40,11 @@ namespace pq
             return _address;
         }
 
-        OSCIn(MicroOsc &osc, const char *address) : _microOsc(osc), _address(address)
+        OSCIn(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
         {
         }
 
-        void set(float f)
+         void set(float f)
         {
             _value = f;
         }
@@ -146,7 +151,7 @@ namespace pq
         float _value;
 
     public:
-        OSCOut(MicroOsc &osc, const char *address, float minimumInterval = 0.05) : _microOsc(osc), _address(address)
+        OSCOut(MicroOsc &osc, const char *address, float minimumInterval = 0.05,  Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
         {
             _interval = floor(minimumInterval * 1000.0f);
         }
