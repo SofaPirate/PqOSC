@@ -178,6 +178,7 @@ namespace pq
             if (_needToSend)
             {
                 _microOsc.sendFloat(_address, _value);
+                _needToSend = false;
             }
         }
     };
