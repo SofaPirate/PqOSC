@@ -131,8 +131,8 @@ namespace pq
 
     public:
         // Constructor with default value for _iic_address
-        OSCSSLIP(HardwareSerial &serial, int baud)
-            : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud)
+        OSCSSLIP(HardwareSerial &serial, int baud, Engine& engine = Engine::primary())
+            : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud), Unit(engine)
         {
         }
     };
@@ -147,18 +147,19 @@ namespace pq
         MicroOsc &_microOsc;
         const char *_address;
         unsigned long _start;
-        unsigned long _interval;
+        bool _needToSend = false;
         float _value;
 
     public:
-        OSCOut(MicroOsc &osc, const char *address, float minimumInterval = 0.05,  Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OSCOut(MicroOsc &osc, const char *address,   Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
         {
-            _interval = floor(minimumInterval * 1000.0f);
+           
         }
 
         float put(float f)
         {
             _value = f;
+            _needToSend = true;
             return get();
         }
 
@@ -174,10 +175,8 @@ namespace pq
 
         void step()
         {
-            if (millis() - _start >= _interval)
+            if (_needToSend)
             {
-                _start = millis();
-
                 _microOsc.sendFloat(_address, _value);
             }
         }
