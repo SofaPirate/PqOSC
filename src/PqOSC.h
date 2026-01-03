@@ -8,9 +8,15 @@
 
 namespace pq
 {
+
+    enum {
+        OSC_VALUE,
+        OSC_EVENT
+    };
+
     // ===============================================================
     class OscIn; // forward declaration
-    HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
+    extern HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
     // ===============================================================
     class OscIn : public Unit
@@ -24,12 +30,12 @@ namespace pq
         MicroOsc &_microOsc;
 
     protected:
-        virtual void begin() override
+        void begin() override
         {
             _PqOscInList.add(this);
         }
 
-        virtual void step() override
+        void step() override
         {
             
         }
@@ -44,19 +50,18 @@ namespace pq
         {
         }
 
-         void set(float f)
+        void set(float f)
         {
             _value = f;
         }
 
-        float get()
+        float get() override
         {
             return _value;
         }
-
     private:
         // DISABLE THE PUT
-        float put(float f)
+        float put(float f) override
         {
             //_value = f;
             return f;
@@ -65,18 +70,7 @@ namespace pq
 
     // ===============================================================
 
-    void _PqOSCMessageCallback(MicroOscMessage &message)
-    {
-        // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
-        for (size_t i = 0; i != _PqOscInList.size(); i++)
-        {
-            // SHOULD CONVERT INT TO FLOAT
-            if (message.checkOscAddress(_PqOscInList[i]->address()))
-            {
-                _PqOscInList[i]->set(message.nextAsFloat());
-            }
-        }
-    };
+    void _PqOSCMessageCallback(MicroOscMessage &message);
 
     // ===============================================================
     /*
@@ -119,12 +113,12 @@ namespace pq
             this->onOscMessageReceived(_PqOSCMessageCallback);
         }
 
-        void begin()
+        void begin() override
         {
             _serial.begin(_baud);
         }
 
-        float get()
+        float get() override
         {
             return 0;
         }
@@ -146,41 +140,53 @@ namespace pq
     private:
         MicroOsc &_microOsc;
         const char *_address;
-        unsigned long _start;
-        bool _needToSend = false;
         float _value;
 
-    public:
-        OscOut(MicroOsc &osc, const char *address,   Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
-        {
-           
-        }
+        char _typeTag;
 
-        float put(float f)
+        bool _needToSend  : 1;
+        uint8_t _mode     : 1;
+        uint8_t _unused   : 6;
+
+    public:
+        OscOut(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) 
+            : OscOut(osc, address, 'f', engine)
+        {}
+
+        OscOut(MicroOsc &osc, const char *address, char typeTag, Engine& engine = Engine::primary()) 
+            : Unit(engine), _microOsc(osc), _address(address), _typeTag(typeTag), _needToSend(false)
+        {}
+
+        float put(float f) override
         {
             _value = f;
             _needToSend = true;
             return get();
         }
 
-        float get()
+        float get() override
         {
             return _value;
         }
 
-        void begin()
-        {
-            _start = millis();
-        }
+        virtual void mode(uint8_t mode);
 
-        void step()
+        virtual uint8_t mode() const { return _mode; }
+
+    protected:
+        void begin() override;
+
+        void step() override
         {
             if (_needToSend)
             {
-                _microOsc.sendFloat(_address, _value);
+                _sendMessage();
                 _needToSend = false;
             }
         }
+
+        void _sendMessage();
+
     };
 }
 #endif
