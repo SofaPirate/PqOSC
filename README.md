@@ -7,7 +7,7 @@ GitHub repo : https://github.com/SofaPirate/PqOsc
 > [!CAUTION]
 > Work in progress, API will change!
 
-Here are two examples that show how to receive the OSC Slip data:
+To receive the data, your software must be able to process OSC SLIP. Here are a few demonstrations that show how to receive the OSC Slip data in Pure Data and Max:
 - [OSC SLIP dans Pd @ AidE](https://t-o-f.info/aide/#/pd/osc/slip/)
 - [Pd : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/pd/osc/relais/)
 - [Max : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/max/osc/relais/)
