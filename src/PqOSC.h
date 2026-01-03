@@ -8,18 +8,18 @@
 
 namespace pq
 {
-    // ===============================================================
+
     class OscIn; // forward declaration
     HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
-    // ===============================================================
+    // OscIn class ----------------------------------------------------------- |
     class OscIn : public Unit
     {
 
         // friend class OSCSlip; // Grant access
 
     private:
-        const char * _address;
+        const char *_address;
         float _value;
         MicroOsc &_microOsc;
 
@@ -31,7 +31,6 @@ namespace pq
 
         virtual void step() override
         {
-            
         }
 
     public:
@@ -40,11 +39,11 @@ namespace pq
             return _address;
         }
 
-        OscIn(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OscIn(MicroOsc &osc, const char *address, Engine &engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine)
         {
         }
 
-         void set(float f)
+        void set(float f)
         {
             _value = f;
         }
@@ -62,9 +61,9 @@ namespace pq
             return f;
         }
     };
+    // ----------------------------------------------------------------------- |
 
-    // ===============================================================
-
+    // _PqOSCMessageCallback ------------------------------------------------- |
     void _PqOSCMessageCallback(MicroOscMessage &message)
     {
         // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
@@ -77,41 +76,14 @@ namespace pq
             }
         }
     };
+    // ---------------------------------------------------------------------- |
 
-    // ===============================================================
-    /*
-    class PqOSC : public Unit, protected MicroOsc
-    {
-
-        friend class OscIn;  // Grant access
-        friend class OscOut; // Grant access
-
-    protected:
-        MicroOsc &_microOsc;
-
-        PqOSC(MicroOsc &microOsc) : _microOsc(microOsc)
-        {
-        }
-
-        void _add(OscIn *component)
-        {
-            _PqoscInList.add(component);
-        }
-
-        void step() override
-        {
-            _microOsc.onOscMessageReceived(_PqOSCMessageCallback);
-        }
-    };
-*/
-    // ===============================================================
-
+    // OscSlip class -------------------------------------------------------- |
     template <const size_t MICRO_OSC_IN_SIZE>
     class OscSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
     private:
-        HardwareSerial &_serial;
-        int _baud;
+
 
     protected:
         void step() override
@@ -121,7 +93,7 @@ namespace pq
 
         void begin()
         {
-            _serial.begin(_baud);
+           
         }
 
         float get()
@@ -131,16 +103,48 @@ namespace pq
 
     public:
         // Constructor with default value for _iic_address
-        OscSlip(HardwareSerial &serial, int baud, Engine& engine = Engine::primary())
-            : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud), Unit(engine)
+        OscSlip(Stream &stream, Engine &engine = Engine::primary())
+            : MicroOscSlip<MICRO_OSC_IN_SIZE>(stream), Unit(engine)
         {
         }
     };
+    // ----------------------------------------------------------------------- |
 
-    // ===============================================================
+    // OscUdp class ---------------------------------------------------------- |
+    // OSC UDP Communication
+    template <const size_t MICRO_OSC_IN_SIZE>
+    class OscUdp : public Unit, public MicroOscUdp<MICRO_OSC_IN_SIZE>
+    {
+    private:
+    protected:
+        void step() override
+        {
+            this->onOscMessageReceived(_PqOSCMessageCallback);
+        }
 
-    // ===============================================================
+        void begin()
+        {
+        }
 
+        float get()
+        {
+            return 0;
+        }
+
+    public:
+        OscUdp(UDP &udp, Engine &engine = Engine::primary())
+            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp), Unit(engine)
+        {
+        }
+
+        OscUdp(UDP &udp, IPAddress destinationIp, unsigned int destinationPort, Engine &engine = Engine::primary())
+            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort), Unit(engine)
+        {
+        }
+    };
+    // ----------------------------------------------------------------------- |
+
+    // OscOut class ---------------------------------------------------------- |
     class OscOut : public Unit
     {
     private:
@@ -151,9 +155,8 @@ namespace pq
         float _value;
 
     public:
-        OscOut(MicroOsc &osc, const char *address,   Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OscOut(MicroOsc &osc, const char *address, Engine &engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine)
         {
-           
         }
 
         float put(float f)
@@ -182,5 +185,6 @@ namespace pq
             }
         }
     };
+    // ----------------------------------------------------------------------- |
 }
 #endif
