@@ -9,11 +9,11 @@
 namespace pq
 {
     // ===============================================================
-    class OSCIn; // forward declaration
-    HybridArrayList<OSCIn *, PLAQUETTE_MAX_UNITS> _PqOSCInList;
+    class OscIn; // forward declaration
+    HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
     // ===============================================================
-    class OSCIn : public Unit
+    class OscIn : public Unit
     {
 
         // friend class OSCSlip; // Grant access
@@ -26,7 +26,7 @@ namespace pq
     protected:
         virtual void begin() override
         {
-            _PqOSCInList.add(this);
+            _PqOscInList.add(this);
         }
 
         virtual void step() override
@@ -40,7 +40,7 @@ namespace pq
             return _address;
         }
 
-        OSCIn(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OscIn(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
         {
         }
 
@@ -68,12 +68,12 @@ namespace pq
     void _PqOSCMessageCallback(MicroOscMessage &message)
     {
         // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
-        for (size_t i = 0; i != _PqOSCInList.size(); i++)
+        for (size_t i = 0; i != _PqOscInList.size(); i++)
         {
             // SHOULD CONVERT INT TO FLOAT
-            if (message.checkOscAddress(_PqOSCInList[i]->address()))
+            if (message.checkOscAddress(_PqOscInList[i]->address()))
             {
-                _PqOSCInList[i]->set(message.nextAsFloat());
+                _PqOscInList[i]->set(message.nextAsFloat());
             }
         }
     };
@@ -83,8 +83,8 @@ namespace pq
     class PqOSC : public Unit, protected MicroOsc
     {
 
-        friend class OSCIn;  // Grant access
-        friend class OSCOut; // Grant access
+        friend class OscIn;  // Grant access
+        friend class OscOut; // Grant access
 
     protected:
         MicroOsc &_microOsc;
@@ -93,7 +93,7 @@ namespace pq
         {
         }
 
-        void _add(OSCIn *component)
+        void _add(OscIn *component)
         {
             _PqoscInList.add(component);
         }
@@ -107,7 +107,7 @@ namespace pq
     // ===============================================================
 
     template <const size_t MICRO_OSC_IN_SIZE>
-    class OSCSSLIP : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
+    class OscSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
     private:
         HardwareSerial &_serial;
@@ -131,7 +131,7 @@ namespace pq
 
     public:
         // Constructor with default value for _iic_address
-        OSCSSLIP(HardwareSerial &serial, int baud, Engine& engine = Engine::primary())
+        OscSlip(HardwareSerial &serial, int baud, Engine& engine = Engine::primary())
             : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud), Unit(engine)
         {
         }
@@ -141,7 +141,7 @@ namespace pq
 
     // ===============================================================
 
-    class OSCOut : public Unit
+    class OscOut : public Unit
     {
     private:
         MicroOsc &_microOsc;
@@ -151,7 +151,7 @@ namespace pq
         float _value;
 
     public:
-        OSCOut(MicroOsc &osc, const char *address,   Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OscOut(MicroOsc &osc, const char *address,   Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
         {
            
         }
