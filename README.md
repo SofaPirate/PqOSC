@@ -11,10 +11,11 @@ To receive the data, your software must be able to process OSC SLIP. Here are a 
 - [OSC SLIP dans Pd @ AidE](https://t-o-f.info/aide/#/pd/osc/slip/)
 - [Pd : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/pd/osc/relais/)
 - [Max : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/max/osc/relais/)
+- There is also a Pure Data patch included in the `extras` directory.
 
 ## Examples
 
-If you still want to try this library here are some examples. You can test these examples with the Pure Data patch included in the 'extras' directory.
+If you still want to try this library here are some examples. You can test these examples with the Pure Data patch included in the `extras` directory.
 
 ### Output only
 
