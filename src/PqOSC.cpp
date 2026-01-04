@@ -12,7 +12,55 @@ void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
         // SHOULD CONVERT INT TO FLOAT
         if (message.checkOscAddress(_PqOscInList[i]->address()))
         {
-            _PqOscInList[i]->set(message.nextAsFloat());
+            char typeTag;
+            message.copyTypeTags(&typeTag, sizeof(typeTag));
+
+            float value = 0;
+            switch (typeTag) {
+                case 'f': {
+                    value = message.nextAsFloat();
+                    break;
+                }
+                case 'i': {
+                    value = static_cast<float>(message.nextAsInt());
+                    break;
+                }
+                case 'b': {
+                    const unsigned char *blobData = 0;
+                    if (message.nextAsBlob(&blobData) == sizeof(float)) {
+                        memcpy(&value, blobData, sizeof(float));
+                    }
+                    break;
+                }
+                case 's': {
+                    const char* str = message.nextAsString();
+                    value = atof(str);
+                    break;
+                }
+
+                case 'N':
+                case 'I':
+                case 'T': {
+                    value = 1;
+                    break;
+                }
+
+                case 'F' {
+                    value = 0;
+                    break;
+                }
+
+                // Unsupported.
+                case 'd':
+                case 't': // osc timetag
+                case 'm':
+                case 'h':
+                default:
+                    value = 0;
+            }
+
+            // Set value.
+            _PqOscInList[i]->receive(value);
         }
     }
 };
