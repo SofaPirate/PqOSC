@@ -37,7 +37,6 @@ namespace pq
     protected:
         void begin() override
         {
-            oscInList().add(this);
             _messageReceived = _valueUpdated = false;
         }
 
@@ -69,6 +68,7 @@ namespace pq
         OscIn(MicroOsc &osc, const char *address, Engine &engine = Engine::primary())
             : Unit(engine), _microOsc(osc), _address(address), _valueUpdated(false)
         {
+            oscInList().add(this);
         }
 
 
