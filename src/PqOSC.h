@@ -71,7 +71,6 @@ namespace pq
             oscInList().add(this);
         }
 
-
         float get() override
         {
             return _value;
@@ -84,8 +83,8 @@ namespace pq
         virtual void onUpdate(EventCallback callback) { onEvent(callback, EVENT_UPDATE); }
 
         // ----------------------------------------------------------------------- |
-        // _PqOSCMessageCallback ------------------------------------------------- |
-        static void _PqOSCMessageCallback(MicroOscMessage &message);
+        // handleOSCMessageCallback ---------------------------------------------- |
+        static void handleOSCMessageCallback(MicroOscMessage &message);
         // ---------------------------------------------------------------------- |
 
     private:
@@ -108,7 +107,7 @@ namespace pq
     protected:
         void step() override
         {
-            this->onOscMessageReceived(OscIn::_PqOSCMessageCallback);
+            this->onOscMessageReceived(OscIn::handleOSCMessageCallback);
         }
 
         void begin() override
@@ -140,7 +139,7 @@ namespace pq
 
         void step() override
         {
-            this->onOscMessageReceived(OscIn::_PqOSCMessageCallback);
+            this->onOscMessageReceived(OscIn::handleOSCMessageCallback);
         }
 
         void begin()

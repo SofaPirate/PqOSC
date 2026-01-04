@@ -7,7 +7,7 @@ HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& OscIn::oscInList() {
   return instance;
 }
 
-void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
+void OscIn::handleOSCMessageCallback(MicroOscMessage &message)
 {
     HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& oscInputs = oscInList();
     for (size_t i = 0; i != oscInputs.size(); i++)
