@@ -4,7 +4,7 @@ namespace pq {
 // SINGLE definition
 HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
-void _PqOSCMessageCallback(MicroOscMessage &message)
+void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
 {
     // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
     for (size_t i = 0; i != _PqOscInList.size(); i++)

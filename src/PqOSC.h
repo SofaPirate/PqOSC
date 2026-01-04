@@ -18,26 +18,44 @@ namespace pq
     class OscIn; // forward declaration
     extern HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
-    // ===============================================================
+    // OscIn class ----------------------------------------------------------- |
     class OscIn : public Unit
     {
 
         // friend class OSCSlip; // Grant access
 
     private:
-        const char * _address;
+        const char *_address;
         float _value;
         MicroOsc &_microOsc;
+        bool _messageReceived : 1;
+        bool _valueUpdated : 1;
+        uint8_t _unused : 6;
 
     protected:
         void begin() override
         {
             _PqOscInList.add(this);
+            _messageReceived = _valueUpdated = false;
         }
 
-        void step() override
+        void step() override {
+            _valueUpdated = _messageReceived;
+            _messageReceived = false;
+        }
+
+        /// Returns true iff an event of a certain type has been triggered.
+        bool eventTriggered(EventType eventType) override {
+            switch (eventType) {
+            case EVENT_UPDATE: return updated();
+            default:           return Unit::eventTriggered(eventType);
+            }
+        }    
+
+        void receive(float f)
         {
-            
+            _value = f;
+            _messageReceived = true;
         }
 
     public:
@@ -46,19 +64,28 @@ namespace pq
             return _address;
         }
 
-        OscIn(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine) 
+        OscIn(MicroOsc &osc, const char *address, Engine &engine = Engine::primary())
+            : Unit(engine), _microOsc(osc), _address(address), _valueUpdated(false)
         {
         }
 
-        void set(float f)
-        {
-            _value = f;
-        }
 
         float get() override
         {
             return _value;
         }
+
+        /// Returns true iff value was changed.
+        virtual bool updated() { return _valueUpdated; }
+
+        /// Registers event callback on finish event.
+        virtual void onUpdate(EventCallback callback) { onEvent(callback, EVENT_UPDATE); }
+
+        // ----------------------------------------------------------------------- |
+        // _PqOSCMessageCallback ------------------------------------------------- |
+        static void _PqOSCMessageCallback(MicroOscMessage &message);
+        // ---------------------------------------------------------------------- |
+
     private:
         // DISABLE THE PUT
         float put(float f) override
