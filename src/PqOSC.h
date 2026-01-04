@@ -66,56 +66,25 @@ namespace pq
             //_value = f;
             return f;
         }
+
     };
 
-    // ===============================================================
-
-    void _PqOSCMessageCallback(MicroOscMessage &message);
-
-    // ===============================================================
-    /*
-    class PqOSC : public Unit, protected MicroOsc
-    {
-
-        friend class OscIn;  // Grant access
-        friend class OscOut; // Grant access
-
-    protected:
-        MicroOsc &_microOsc;
-
-        PqOSC(MicroOsc &microOsc) : _microOsc(microOsc)
-        {
-        }
-
-        void _add(OscIn *component)
-        {
-            _PqoscInList.add(component);
-        }
-
-        void step() override
-        {
-            _microOsc.onOscMessageReceived(_PqOSCMessageCallback);
-        }
-    };
-*/
-    // ===============================================================
-
+    // OscSlip class -------------------------------------------------------- |
     template <const size_t MICRO_OSC_IN_SIZE>
     class OscSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
     private:
-        HardwareSerial &_serial;
-        int _baud;
+
 
     protected:
         void step() override
         {
-            this->onOscMessageReceived(_PqOSCMessageCallback);
+            this->onOscMessageReceived(OscIn::_PqOSCMessageCallback);
         }
 
         void begin() override
         {
-            _serial.begin(_baud);
+           
         }
 
         float get() override
@@ -125,16 +94,49 @@ namespace pq
 
     public:
         // Constructor with default value for _iic_address
-        OscSlip(HardwareSerial &serial, int baud, Engine& engine = Engine::primary())
-            : MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(serial), _baud(baud), Unit(engine)
+        OscSlip(Stream &stream, Engine &engine = Engine::primary())
+            : MicroOscSlip<MICRO_OSC_IN_SIZE>(stream), Unit(engine)
         {
         }
     };
+    // ----------------------------------------------------------------------- |
 
-    // ===============================================================
+    // OscUdp class ---------------------------------------------------------- |
+    // OSC UDP Communication
+    template <const size_t MICRO_OSC_IN_SIZE>
+    class OscUdp : public Unit, public MicroOscUdp<MICRO_OSC_IN_SIZE>
+    {
+    private:
+    protected:
 
-    // ===============================================================
+        void step() override
+        {
+            this->onOscMessageReceived(OscIn::_PqOSCMessageCallback);
+        }
 
+        void begin()
+        {
+        }
+
+        float get()
+        {
+            return 0;
+        }
+
+    public:
+        OscUdp(UDP &udp, Engine &engine = Engine::primary())
+            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp), Unit(engine)
+        {
+        }
+
+        OscUdp(UDP &udp, IPAddress destinationIp, unsigned int destinationPort, Engine &engine = Engine::primary())
+            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort), Unit(engine)
+        {
+        }
+    };
+    // ----------------------------------------------------------------------- |
+
+    // OscOut class ---------------------------------------------------------- |
     class OscOut : public Unit
     {
     private:
@@ -188,5 +190,6 @@ namespace pq
         void _sendMessage();
 
     };
+    // ----------------------------------------------------------------------- |
 }
 #endif
