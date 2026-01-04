@@ -45,7 +45,7 @@ void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
                     break;
                 }
 
-                case 'F' {
+                case 'F': {
                     value = 0;
                     break;
                 }
