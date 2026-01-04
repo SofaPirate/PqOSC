@@ -16,13 +16,15 @@ namespace pq
 
     // ===============================================================
     class OscIn; // forward declaration
-    extern HybridArrayList<OscIn *, PLAQUETTE_MAX_UNITS> _PqOscInList;
 
     // OscIn class ----------------------------------------------------------- |
     class OscIn : public Unit
     {
 
         // friend class OSCSlip; // Grant access
+    private:
+        // Shared static container containing all units. Static because it is shared between all OscIn units.
+        static HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& oscInList();
 
     private:
         const char *_address;
@@ -35,7 +37,7 @@ namespace pq
     protected:
         void begin() override
         {
-            _PqOscInList.add(this);
+            oscInList().add(this);
             _messageReceived = _valueUpdated = false;
         }
 

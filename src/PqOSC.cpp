@@ -1,20 +1,26 @@
 #include "PqOSC.h"
 
 namespace pq {
-// SINGLE definition
-HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS> _PqOscInList;
+
+HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& OscIn::oscInList() {
+  static HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS> instance;
+  return instance;
+}
 
 void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
 {
-    // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
-    for (size_t i = 0; i != _PqOscInList.size(); i++)
+    HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& oscInputs = oscInList();
+    for (size_t i = 0; i != oscInputs.size(); i++)
     {
-        // SHOULD CONVERT INT TO FLOAT
-        if (message.checkOscAddress(_PqOscInList[i]->address()))
+        OscIn *oscIn = oscInputs[i];
+
+        if (message.checkSource(oscIn->_microOsc) && message.checkOscAddress(oscIn->address()))
         {
+            // Get typetag.
             char typeTag;
             message.copyTypeTags(&typeTag, sizeof(typeTag));
 
+            // Get value.
             float value = 0;
             switch (typeTag) {
                 case 'f': {
@@ -60,7 +66,7 @@ void OscIn::_PqOSCMessageCallback(MicroOscMessage &message)
             }
 
             // Set value.
-            _PqOscInList[i]->receive(value);
+            oscIn->receive(value);
         }
     }
 };
