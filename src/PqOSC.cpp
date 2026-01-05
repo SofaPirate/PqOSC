@@ -57,7 +57,6 @@ void OscIn::handleOSCMessageCallback(MicroOscMessage &message)
                 }
 
                 // Unsupported.
-                case 'd':
                 case 't': // osc timetag
                 case 'm':
                 case 'h':
@@ -71,47 +70,7 @@ void OscIn::handleOSCMessageCallback(MicroOscMessage &message)
     }
 };
 
-void OscOut::begin() {
-    switch (_typeTag) {
-        case 'i':
-        case 'b':
-        case 's':
-        case 'f':
-        case 'd':
-          mode(OSC_VALUE);
-          break;
-
-        // Triggers.
-        case 'T':
-        case 'F':
-        case 'N':
-        case 'I':
-        case '\0': // no arguments (backwards compatibility)
-        case ' ':
-          mode(OSC_EVENT);
-          break;
-
-        // Unsupported.
-        case 't': // osc timetag
-        case 'm':
-        case 'h':
-        default:;
-          mode(OSC_VALUE);
-          break;
-    }
-}
-
-void OscOut::mode(uint8_t mode) {
-  // Change mode.
-  _mode = constrain(mode, (uint8_t)OSC_VALUE, (uint8_t)OSC_EVENT);
-}
-
 void OscOut::_sendMessage() {
-
-    bool isValue   = (_mode == OSC_VALUE);
-    bool sendValue = (isValue || analogToDigital(_value));
-    
-    if (sendValue) {
 
       switch (_typeTag) {
 

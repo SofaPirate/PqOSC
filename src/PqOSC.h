@@ -8,20 +8,12 @@
 
 namespace pq
 {
-
-    enum {
-        OSC_VALUE,
-        OSC_EVENT
-    };
-
     // ===============================================================
     class OscIn; // forward declaration
 
     // OscIn class ----------------------------------------------------------- |
     class OscIn : public Unit
     {
-
-        // friend class OSCSlip; // Grant access
     private:
         // Shared static container containing all units. Static because it is shared between all OscIn units.
         static HybridArrayList<OscIn*, PLAQUETTE_MAX_UNITS>& oscInList();
@@ -123,7 +115,7 @@ namespace pq
     public:
         // Constructor with default value for _iic_address
         OscSlip(Stream &stream, Engine &engine = Engine::primary())
-            : MicroOscSlip<MICRO_OSC_IN_SIZE>(stream), Unit(engine)
+            : Unit(engine), MicroOscSlip<MICRO_OSC_IN_SIZE>(stream)
         {
         }
     };
@@ -153,12 +145,12 @@ namespace pq
 
     public:
         OscUdp(UDP &udp, Engine &engine = Engine::primary())
-            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp), Unit(engine)
+            : Unit(engine), MicroOscUdp<MICRO_OSC_IN_SIZE>(udp)
         {
         }
 
         OscUdp(UDP &udp, IPAddress destinationIp, unsigned int destinationPort, Engine &engine = Engine::primary())
-            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort), Unit(engine)
+            : Unit(engine), MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort)
         {
         }
     };
@@ -174,9 +166,7 @@ namespace pq
 
         char _typeTag;
 
-        bool _needToSend  : 1;
-        uint8_t _mode     : 1;
-        uint8_t _unused   : 6;
+        bool _needToSend;
 
     public:
         OscOut(MicroOsc &osc, const char *address, Engine& engine = Engine::primary()) 
@@ -199,13 +189,7 @@ namespace pq
             return _value;
         }
 
-        virtual void mode(uint8_t mode);
-
-        virtual uint8_t mode() const { return _mode; }
-
     protected:
-        void begin() override;
-
         void step() override
         {
             if (_needToSend)
