@@ -127,11 +127,6 @@ void OscOut::_sendMessage() {
           case 'h':
           default:;
       }
-    }
-
-    // if (!isValue) {
-    //     _value = 0.0;
-    // }
 }
 
 }
