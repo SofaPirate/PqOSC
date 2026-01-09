@@ -64,7 +64,7 @@ namespace pq
     // ----------------------------------------------------------------------- |
 
     // _PqOSCMessageCallback ------------------------------------------------- |
-    void _PqOSCMessageCallback(MicroOscMessage &message)
+    void _PqOSCMessageCallback(MicroOsc & source, MicroOscMessage & message)
     {
         // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
         for (size_t i = 0; i != _PqOscInList.size(); i++)
