@@ -21,7 +21,6 @@ If you still want to try this library here are some examples. You can test these
 
 This code outputs, every 100 milliseconds, an OSC SLIP message with the OSC address "/wave" and the value of a SINE Wave :
 ```cpp
-#include <Arduino.h>
 #include <Plaquette.h>
 #include <PqOsc.h>
 
@@ -61,7 +60,6 @@ void begin() {
 
 This code echoes the value of the OSC message received on the OSC address "/alpha" to the OSC address "/beta" (i.e. /alpha → Arduino → /beta):
 ```cpp
-#include <Arduino.h>
 #include <Plaquette.h>
 #include <PqOsc.h>
 
@@ -103,7 +101,6 @@ The code uses the [MicroNet](https://github.com/thomasfredericks/MicroNet) libra
 The microcontroller connects to the network with the name "plaquette" and it looks for a destination device on the network called "m3-air". Note that you should append ".local" tho these names when using when referencing them in your software. For example, in Pure Data, you would connect to "plaquette.local".
 
 ```cpp
-#include <Arduino.h>
 #include <Plaquette.h>
 #include <PqOsc.h>
 #include <MicroNetEthernet.h>
