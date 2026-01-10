@@ -94,7 +94,8 @@ namespace pq
     class OscSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
     private:
-
+        SerialType* _serial = nullptr;
+        unsigned long _baudRate = 0;
 
     protected:
         void step() override
@@ -104,7 +105,11 @@ namespace pq
 
         void begin() override
         {
-           
+            if (_serial)
+            {
+                // Safely start serial.
+                beginSerial(*_serial, _baudRate);
+            }
         }
 
         float get() override
@@ -118,6 +123,17 @@ namespace pq
             : Unit(engine), MicroOscSlip<MICRO_OSC_IN_SIZE>(stream)
         {
         }
+
+        OscSlip(SerialType &serial, unsigned long baudRate, Engine &engine = Engine::primary())
+            : Unit(engine), MicroOscSlip<MICRO_OSC_IN_SIZE>(serial), _serial(&serial), _baudRate(baudRate)
+        {
+        }
+
+        OscSlip(unsigned long baudRate, Engine &engine = Engine::primary())
+            : OscSlip(PLAQUETTE_DEFAULT_SERIAL, baudRate, engine)
+        {
+        }
+
     };
     // ----------------------------------------------------------------------- |
 
