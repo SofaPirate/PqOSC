@@ -27,6 +27,10 @@ void OscIn::handleOSCMessageCallback(MicroOscMessage &message)
                     value = message.nextAsFloat();
                     break;
                 }
+                case 'd': {
+                    value = static_cast<float>(message.nextAsDouble());
+                    break;
+                }
                 case 'i': {
                     value = static_cast<float>(message.nextAsInt());
                     break;
@@ -68,65 +72,65 @@ void OscIn::handleOSCMessageCallback(MicroOscMessage &message)
             oscIn->receive(value);
         }
     }
-};
+}
 
 void OscOut::_sendMessage() {
 
-      switch (_typeTag) {
+    switch (_typeTag) {
 
-          // Values.
-          case 'i': {
-              _microOsc.sendInt(_address, round(_value)); 
-              break;
-          }
-          case 'b': {
-              _microOsc.sendBlob(_address, (unsigned char *) &_value, sizeof(_value)); 
-              break;
-          }
-          case 's': {
-              char str[32];
-              sprintf(str, "%f", _value);
-              _microOsc.sendString(_address, (const char *) &_value); 
-              break;
-          }
-          case 'f': {
-              _microOsc.sendFloat(_address, _value); 
-              break;
-          }
-          case 'd': {
-              _microOsc.sendDouble(_address, _value); 
-              break;
-          }
+        // Values.
+        case 'f': {
+            _microOsc.sendFloat(_address, _value); 
+            break;
+        }
+        case 'd': {
+            _microOsc.sendDouble(_address, _value); 
+            break;
+        }
+        case 'i': {
+            _microOsc.sendInt(_address, round(_value)); 
+            break;
+        }
+        case 'b': {
+            _microOsc.sendBlob(_address, (unsigned char *) &_value, sizeof(_value)); 
+            break;
+        }
+        case 's': {
+            char str[32];
+            sprintf(str, "%f", _value);
+            _microOsc.sendString(_address, (const char *) &_value); 
+            break;
+        }
 
-          // Triggers.
-          case 'T': { // true
-              _microOsc.sendTrue(_address); 
-              break;
-          }
-          case 'F': { // false
-              _microOsc.sendFalse(_address); 
-              break;
-          }
-          case 'N': { // nil
-              _microOsc.sendNull(_address); 
-              break;
-          }
-          case 'I': { // impulse
-              _microOsc.sendImpulse(_address); 
-              break;
-          }
-          case '\0': // no arguments (backwards compatibility) - supported but not recommended
-          case ' ': { 
-              _microOsc.sendMessage(_address, ""); 
-              break;
-            }
+        // Triggers.
+        case 'T': { // true
+            _microOsc.sendTrue(_address); 
+            break;
+        }
+        case 'F': { // false
+            _microOsc.sendFalse(_address); 
+            break;
+        }
+        case 'N': { // nil
+            _microOsc.sendNull(_address); 
+            break;
+        }
+        case 'I': { // impulse
+            _microOsc.sendImpulse(_address); 
+            break;
+        }
 
-          // Unsupported.
-          case 't': // osc timetag
-          case 'm':
-          case 'h':
-          default:;
+        // Unsupported.
+        case 't': // osc timetag
+        case 'm':
+        case 'h':
+        default:;
       }
+    }
+
+    // if (!isValue) {
+    //     _value = 0.0;
+    // }
 }
 
 }
