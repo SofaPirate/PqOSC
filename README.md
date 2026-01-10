@@ -37,25 +37,29 @@ OscOut oscOutWave(oscSlip, "/wave");
 // Used to slow down message transmission
 Metronome ticker(0.1f); // 10 Hz
 
-void begin()
-{
-  Serial.begin(115200);
-}
-
 void step()
 {
-
   if (ticker)
   {
     wave >> oscOutWave;
-
   }
+}
+```
+
+Using Plaquette's event management callbacks you can replace ``step()`` by:
+
+```cpp
+void begin() {
+  ticker.onBang([]() // inline callback
+  { 
+    wave >> oscOutWave; 
+  });
 }
 ```
 
 ### Echo OSC (forward input to output) over SLIP
 
-This code echoes every 100 milliseconds the value of the OSC message received on the OSC address "/alpha" to the OSC address "/beta" (i.e. /alpha → Arduino → /beta):
+This code echoes the value of the OSC message received on the OSC address "/alpha" to the OSC address "/beta" (i.e. /alpha → Arduino → /beta):
 ```cpp
 #include <Arduino.h>
 #include <Plaquette.h>
@@ -70,20 +74,23 @@ OscIn oscInAlpha(oscSlip, "/alpha");
 // Link an output address to the node
 OscOut oscOutBeta(oscSlip, "/beta");
 
-// Used to slow down message transmission
-Metronome ticker(0.1f); // 10 Hz
-
-void begin()
-{
-  Serial.begin(115200);
-}
-
 void step()
 {
-  if (ticker)
+  if (oscInAlpha.updated()) 
   {
+    // Send message only when new message received.
     oscInAlpha >> oscOutBeta;
   }
+}
+```
+
+Event callback:
+```cpp
+void begin() {
+  oscInAlpha.onUpdate([]() // inline callback
+  { 
+    oscInAlpha >> oscOutBeta;
+  });
 }
 ```
 
@@ -123,7 +130,6 @@ Monitor monitor(115200);
 
 void begin()
 {
-
   myMicroNet.begin("plaquette");
 
   myUdp.begin(kMyReceivePort);
@@ -149,7 +155,6 @@ void begin()
 
 void step()
 {
-
   myMicroNet.update();
 
   if (ticker)
