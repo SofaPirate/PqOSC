@@ -158,3 +158,17 @@ void step()
   }
 }
 ```
+
+### Type support
+
+You can change output type by specifying it at construction.
+For example, this will send the value as an integer:
+
+```cpp
+OscOut oscOutput(oscSlip, "/output", 'i');
+```
+
+Input type in ``OscIn`` are figured out at reception and are converted to float.
+
+Please refer to [MicroOSC](https://github.com/thomasfredericks/MicroOsc/) for 
+a complete reference on supported types.
