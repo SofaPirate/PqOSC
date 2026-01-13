@@ -7,7 +7,7 @@ GitHub repo : https://github.com/SofaPirate/PqOsc
 > [!CAUTION]
 > Work in progress, API will change!
 
-To receive the data, your software must be able to process OSC SLIP. Here are a few demonstrations that show how to receive the OSC Slip data in Pure Data and Max:
+To receive the data, your software must be able to process OSC SLIP. Here are a few demonstrations that show how to receive the OSC Slip data in Pure Data and Max (in French):
 - [OSC SLIP dans Pd @ AidE](https://t-o-f.info/aide/#/pd/osc/slip/)
 - [Pd : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/pd/osc/relais/)
 - [Max : Relais OSC SLIP ⇄ UDP @ AidE](https://t-o-f.info/aide/#/max/osc/relais/)
@@ -45,7 +45,7 @@ void step()
 }
 ```
 
-Using Plaquette's event management callbacks you can replace ``step()`` by:
+Using Plaquette's [event management](https://plaquette.org/events.html) callbacks you can replace ``step()`` by:
 
 ```cpp
 void begin() {
