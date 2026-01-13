@@ -28,11 +28,7 @@ This code outputs, every 100 milliseconds, an OSC SLIP message with the OSC addr
 Wave wave(SINE);
 
 // Create the input and output node
-<<<<<<< HEAD
-OscSlip<128> oscSlip(Serial);
-=======
 OscSlip<128> oscSlip(115200); // use Serial by default
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 
 // Link an output address to the node
 OscOut oscOutWave(oscSlip, "/wave");
@@ -40,14 +36,6 @@ OscOut oscOutWave(oscSlip, "/wave");
 // Used to slow down message transmission
 Metronome ticker(0.1f); // 10 Hz
 
-<<<<<<< HEAD
-void begin()
-{
-  Serial.begin(115200);
-}
-
-=======
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 void step()
 {
   if (ticker)
@@ -57,11 +45,7 @@ void step()
 }
 ```
 
-<<<<<<< HEAD
-### Echo OSC (forward input to output) over SLIP
-=======
 Using Plaquette's event management callbacks you can replace ``step()`` by:
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 
 ```cpp
 void begin() {
@@ -80,11 +64,7 @@ This code echoes the value of the OSC message received on the OSC address "/alph
 #include <PqOsc.h>
 
 // Create the input and output node
-<<<<<<< HEAD
-OscSlip<128> oscSlip(Serial);
-=======
 OscSlip<128> oscSlip(115200);
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 
 // Link an input address to the node
 OscIn oscInAlpha(oscSlip, "/alpha");
@@ -147,9 +127,6 @@ Monitor monitor(115200);
 
 void begin()
 {
-<<<<<<< HEAD
-  Serial.begin(115200);
-=======
   myMicroNet.begin("plaquette");
 
   myUdp.begin(kMyReceivePort);
@@ -171,7 +148,6 @@ void begin()
   print("Found it at IP: ");
   print(destinationIp);
   println();
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 }
 
 void step()
@@ -185,77 +161,6 @@ void step()
 }
 ```
 
-<<<<<<< HEAD
-### Echo OSC (forward input to output) over UDP
-
-The following code echoes every 100 milliseconds the value of the OSC message received on the OSC address "/alpha" to the OSC address "/beta" (i.e. /alpha → Arduino → /beta).
-
-The code uses the [MicroNet](https://github.com/thomasfredericks/MicroNet) library to help with networking.
-
-The microcontroller connects to the network with the name "plaquette" and it looks for a destination device on the network called "m3-air". Note that you should append ".local" tho these names when using when referencing them in your software. For example, in Pure Data, you would connect to "plaquette.local".
-
-```cpp
-#include <Arduino.h>
-#include <Plaquette.h>
-#include <PqOsc.h>
-#include <MicroNetEthernet.h>
-MicroNetEthernet myMicroNet(MicroNetEthernet::Configuration::ATOM_POE_WITH_ATOM_LITE);
-
-EthernetUDP myUdp;
-const unsigned int kMyReceivePort = 8888;
-const unsigned int kMySendPort = 7777;
-
-// Create the input and output node
-OscUdp<128> myOsc(myUdp);
-  
-// Link an input address to the node
-OscIn oscInAlpha(myOsc, "/alpha");
-
-// Link an output address to the node
-OscOut oscOutBeta(myOsc, "/beta");
-
-// Used to slow down message transmission
-Metronome ticker(0.1f); // 10 Hz, each 100 milliseconds, 10x per second
-
-void begin()
-{
-
-  myMicroNet.begin("plaquette");
-
-  myUdp.begin(kMyReceivePort);
-
-  Serial.begin(115200);
-  Serial.println();
-  Serial.print("My IP: ");
-  Serial.print(myMicroNet.getIP());
-  Serial.println();
-  Serial.print("My name: ");
-  Serial.print(myMicroNet.getName());
-  Serial.println();
-
-  Serial.print("Looking for: m3-air");
-  Serial.println();
-
-  IPAddress destinationIp = myMicroNet.resolveName("m3-air");
-  myOsc.setDestination(destinationIp , kMySendPort);
-
-  Serial.print("Found it at IP: ");
-  Serial.print(destinationIp);
-  Serial.println();
-}
-
-void step()
-{
-
-  myMicroNet.update();
-
-  if (ticker)
-  {
-    oscInAlpha >> oscOutBeta;
-  }
-}
-```
-=======
 ### Type support
 
 You can change output type by specifying it at construction.
@@ -269,4 +174,3 @@ Input type in ``OscIn`` are figured out at reception and are converted to float.
 
 Please refer to [MicroOSC](https://github.com/thomasfredericks/MicroOsc/) for 
 a complete reference on supported types.
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29

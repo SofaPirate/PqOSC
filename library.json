@@ -18,10 +18,16 @@
   ],
   "license": "MIT",
   "homepage": "https://github.com/SofaPirate/PqOSC",
-  "dependencies": {
-    "Plaquette": "https://github.com/SofaPirate/Plaquette.git#develop" ,
-    "MicroOsc": "https://github.com/thomasfredericks/MicroOsc.git"
-  },
+  "dependencies": [
+    {
+      "name": "Plaquette",
+      "version": "https://github.com/SofaPirate/Plaquette.git"
+    },
+    {
+      "name": "MicroOsc",
+      "version": "https://github.com/thomasfredericks/MicroOsc.git"
+    }
+  ],
   "frameworks": "*",
   "platforms": "*"
 }

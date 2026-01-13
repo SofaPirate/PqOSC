@@ -8,7 +8,7 @@
 
 namespace pq
 {
-
+    // ===============================================================
     class OscIn; // forward declaration
 
     // OscIn class ----------------------------------------------------------- |
@@ -47,11 +47,8 @@ namespace pq
 
         void receive(float f)
         {
-<<<<<<< HEAD
-=======
             _value = f;
             _messageReceived = true;
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
         }
 
     public:
@@ -60,26 +57,13 @@ namespace pq
             return _address;
         }
 
-<<<<<<< HEAD
-        OscIn(MicroOsc &osc, const char *address, Engine &engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine)
-=======
         OscIn(MicroOsc &osc, const char *address, Engine &engine = Engine::primary())
             : Unit(engine), _microOsc(osc), _address(address), _valueUpdated(false)
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
         {
             oscInList().add(this);
         }
 
-<<<<<<< HEAD
-        void set(float f)
-        {
-            _value = f;
-        }
-
-        float get()
-=======
         float get() override
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
         {
             return _value;
         }
@@ -92,7 +76,7 @@ namespace pq
 
         // ----------------------------------------------------------------------- |
         // handleOSCMessageCallback ---------------------------------------------- |
-        static void handleOSCMessageCallback(MicroOscMessage &message);
+        static void handleOSCMessageCallback(MicroOsc & source, MicroOscMessage &message);
         // ---------------------------------------------------------------------- |
 
     private:
@@ -104,37 +88,14 @@ namespace pq
         }
 
     };
-    // ----------------------------------------------------------------------- |
 
-<<<<<<< HEAD
-    // _PqOSCMessageCallback ------------------------------------------------- |
-    void _PqOSCMessageCallback(MicroOsc & source, MicroOscMessage & message)
-    {
-        // SHOULD EVENTUALLY CHECK THE SOURCE TO DISTINGUISH MESSAGES FROM DIFFERENT MICROOSC INSTANCES
-        for (size_t i = 0; i != _PqOscInList.size(); i++)
-        {
-            // SHOULD CONVERT INT TO FLOAT
-            if (message.checkOscAddress(_PqOscInList[i]->address()))
-            {
-                _PqOscInList[i]->set(message.nextAsFloat());
-            }
-        }
-    };
-    // ---------------------------------------------------------------------- |
-
-=======
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
     // OscSlip class -------------------------------------------------------- |
     template <const size_t MICRO_OSC_IN_SIZE>
     class OscSlip : public Unit, public MicroOscSlip<MICRO_OSC_IN_SIZE>
     {
     private:
-<<<<<<< HEAD
-
-=======
         SerialType* _serial = nullptr;
         unsigned long _baudRate = 0;
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 
     protected:
         void step() override
@@ -191,10 +152,6 @@ namespace pq
 
         void begin()
         {
-<<<<<<< HEAD
-           
-=======
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
         }
 
         float get()
@@ -203,11 +160,6 @@ namespace pq
         }
 
     public:
-<<<<<<< HEAD
-        // Constructor with default value for _iic_address
-        OscSlip(Stream &stream, Engine &engine = Engine::primary())
-            : MicroOscSlip<MICRO_OSC_IN_SIZE>(stream), Unit(engine)
-=======
         OscUdp(UDP &udp, Engine &engine = Engine::primary())
             : Unit(engine), MicroOscUdp<MICRO_OSC_IN_SIZE>(udp)
         {
@@ -215,49 +167,11 @@ namespace pq
 
         OscUdp(UDP &udp, IPAddress destinationIp, unsigned int destinationPort, Engine &engine = Engine::primary())
             : Unit(engine), MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort)
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
         {
         }
     };
     // ----------------------------------------------------------------------- |
 
-<<<<<<< HEAD
-    // OscUdp class ---------------------------------------------------------- |
-    // OSC UDP Communication
-    template <const size_t MICRO_OSC_IN_SIZE>
-    class OscUdp : public Unit, public MicroOscUdp<MICRO_OSC_IN_SIZE>
-    {
-    private:
-    protected:
-        void step() override
-        {
-            this->onOscMessageReceived(_PqOSCMessageCallback);
-        }
-
-        void begin()
-        {
-        }
-
-        float get()
-        {
-            return 0;
-        }
-
-    public:
-        OscUdp(UDP &udp, Engine &engine = Engine::primary())
-            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp), Unit(engine)
-        {
-        }
-
-        OscUdp(UDP &udp, IPAddress destinationIp, unsigned int destinationPort, Engine &engine = Engine::primary())
-            : MicroOscUdp<MICRO_OSC_IN_SIZE>(udp, destinationIp, destinationPort), Unit(engine)
-        {
-        }
-    };
-    // ----------------------------------------------------------------------- |
-
-=======
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
     // OscOut class ---------------------------------------------------------- |
     class OscOut : public Unit
     {
@@ -266,14 +180,7 @@ namespace pq
         const char *_address;
         float _value;
 
-<<<<<<< HEAD
-    public:
-        OscOut(MicroOsc &osc, const char *address, Engine &engine = Engine::primary()) : _microOsc(osc), _address(address), Unit(engine)
-        {
-        }
-=======
         char _typeTag;
->>>>>>> a57b7287a1db11f3089ab202e8cd376b40c4db29
 
         bool _needToSend;
 
